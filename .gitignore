@@ -1,5 +1,5 @@
 /build
-/target
+/webservice/target
 .DS_Store
 .settings
 .classpath
