@@ -108,4 +108,80 @@ public class Ngnotify implements NgnotifyInterface {
         }
         return null;
     }
+
+    @Override
+    public String acceptSubscription(String ip, int creator_id, int subscriber_id) {
+        try {
+            this.db.startTransaction();
+
+            //Cek apakah ada request yang sesuai
+            this.db.prepareStatement("SELECT * FROM subscriptions WHERE creator_id = ? AND subscriber_id = ? AND status LIKE 'PENDING'");
+            this.db.bind(1, creator_id);
+            this.db.bind(2, subscriber_id);
+            ResultSet result = this.db.executeQuery();
+            if (!result.next()) {
+                this.db.rollbackTransaction();
+                return "No pending subscription request";
+            }
+
+            //Masukkan Log
+            this.addLog("Accept subscription request from user "+subscriber_id+" to penyanyi "+creator_id+" using "+ip, ip, "acceptSubscription");
+
+            //Mengubah status subscription dari PENDING menjadi ACCEPTED
+            this.db.prepareStatement("UPDATE subscriptions SET status = 'ACCEPTED' WHERE creator_id = ? AND subscriber_id = ?");
+            this.db.bind(1, creator_id);
+            this.db.bind(2, subscriber_id);
+            this.db.executeUpdate();
+            //TODO CALLBACK REST BUAT UPDATE DATA SUBSCRIBER
+            this.db.commitTransaction();
+            return "Subscription request accepted";
+        } catch (Exception e) {
+            System.out.println(e);
+            try {
+                this.db.rollbackTransaction();
+            }
+            catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
+        return "Subscription request failed, please try again";
+    }
+
+    @Override
+    public String rejectSubscription(String ip, int creator_id, int subscriber_id) {
+        try {
+            this.db.startTransaction();
+
+            //Cek apakah ada request yang sesuai
+            this.db.prepareStatement("SELECT * FROM subscriptions WHERE creator_id = ? AND subscriber_id = ? AND status LIKE 'PENDING'");
+            this.db.bind(1, creator_id);
+            this.db.bind(2, subscriber_id);
+            ResultSet result = this.db.executeQuery();
+            if (!result.next()) {
+                this.db.rollbackTransaction();
+                return "No pending subscription request";
+            }
+
+            //Masukkan Log
+            this.addLog("Reject subscription request from user "+subscriber_id+" to penyanyi "+creator_id+" using "+ip, ip, "rejectSubscription");
+
+            //Mengubah status subscription dari PENDING menjadi REJECTED
+            this.db.prepareStatement("UPDATE subscriptions SET status = 'REJECTED' WHERE creator_id = ? AND subscriber_id = ?");
+            this.db.bind(1, creator_id);
+            this.db.bind(2, subscriber_id);
+            this.db.executeUpdate();
+            //TODO CALLBACK REST BUAT UPDATE DATA SUBSCRIBER
+            this.db.commitTransaction();
+            return "Subscription request rejected";
+        } catch (Exception e) {
+            System.out.println(e);
+            try {
+                this.db.rollbackTransaction();
+            }
+            catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
+        return "Subscription request failed, please try again";
+    }
 }
