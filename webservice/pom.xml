@@ -10,7 +10,7 @@
 
   <name>webservice</name>
   <!-- FIXME change it to the project's website -->
-  <url>http://localhost:8080/webservice/ngnotify</url>
+  <url>http://localhost:8070/webservice/ngnotify</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
