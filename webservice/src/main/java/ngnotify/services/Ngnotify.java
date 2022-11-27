@@ -4,14 +4,16 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 
 import javax.jws.WebService;
-import javax.print.DocFlavor.READER;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
-
-import com.mysql.cj.xdevapi.Statement;
+//MAILING
+import java.util.Properties;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 @WebService(endpointInterface = "ngnotify.services.NgnotifyInterface")
 public class Ngnotify implements NgnotifyInterface {
@@ -32,6 +34,7 @@ public class Ngnotify implements NgnotifyInterface {
 
     @Override
     public String newSubscription(String ip, int creator_id, int subscriber_id) {
+        System.out.println("newSubscription");
         try {
             // Lihat apakah subscription request sudah pernah ada
             this.db.prepareStatement("SELECT * FROM subscriptions WHERE creator_id = ? AND subscriber_id = ?");
@@ -94,6 +97,7 @@ public class Ngnotify implements NgnotifyInterface {
 
     @Override
     public String[] getSubscriptionList(String ip, String status) {
+        System.out.println("getSubscriptionList");
         try {
             // Masukkan Log
             this.db.startTransaction();
@@ -134,6 +138,7 @@ public class Ngnotify implements NgnotifyInterface {
 
     @Override
     public String acceptSubscription(String ip, int creator_id, int subscriber_id) {
+        System.out.println("acceptSubscription");
         try {
             this.db.startTransaction();
 
@@ -174,6 +179,7 @@ public class Ngnotify implements NgnotifyInterface {
 
     @Override
     public String rejectSubscription(String ip, int creator_id, int subscriber_id) {
+        System.out.println("rejectSubscription");
         try {
             this.db.startTransaction();
 
@@ -214,6 +220,7 @@ public class Ngnotify implements NgnotifyInterface {
 
     @Override
     public String checkStatus(String ip, int creator_id, int subscriber_id) {
+        System.out.println("checkStatus");
         try {
             this.db.startTransaction();
 
