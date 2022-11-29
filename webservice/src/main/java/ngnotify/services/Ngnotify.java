@@ -15,6 +15,8 @@ import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
+import java.util.Vector;
+
 @WebService(endpointInterface = "ngnotify.services.NgnotifyInterface")
 public class Ngnotify implements NgnotifyInterface {
     private DB db;
@@ -92,6 +94,11 @@ public class Ngnotify implements NgnotifyInterface {
                 throw new Exception("Failed to send new subscription request to creator");
             }
             this.db.commitTransaction();
+            Vector<String> emails = http.getAdminEmails();
+            String[] emailsArray = new String[emails.size()];
+            emailsArray = emails.toArray(emailsArray);
+            SendEmail sendEmail = new SendEmail();
+            sendEmail.send(emailsArray, "User "+subscriber_id);
             return "Subscription request sent, waiting for approval";
         } catch (Exception e) {
             System.out.println(e);

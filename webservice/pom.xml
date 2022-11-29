@@ -26,6 +26,14 @@
       <version>2.0.1</version>
     </dependency>
 
+    <!-- JSON PARSER -->
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20220924</version>
+    </dependency>
+
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

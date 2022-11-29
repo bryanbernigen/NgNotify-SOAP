@@ -8,6 +8,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
+import java.util.Vector;
+
+import javax.swing.text.StyledEditorKit.BoldAction;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import jdk.nashorn.internal.parser.JSONParser;
 
 public class HTTP {
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -85,5 +92,38 @@ public class HTTP {
         }
     }
 
-    
+    public Vector<String> getAdminEmails() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:3000/subscription/adminemails"))
+                .build();
+
+        HttpResponse<String> response = client.send(request,
+                HttpResponse.BodyHandlers.ofString());
+
+        Vector<String> emails = new Vector<String>();
+        String[] resp = response.body().split("\"");
+        boolean flag_email = false;
+        boolean flag_titik_dua = false;
+
+        for (String string : resp) {
+            if(flag_email && flag_titik_dua){
+                flag_email = false;
+                flag_titik_dua = false;
+                emails.add(string);
+            }
+            if(string.equals("email")){
+                flag_email = true;
+            }
+            if(flag_email && string.equals(":")){
+                flag_titik_dua = true;
+            }
+        }
+
+        for (String email : emails) {
+            System.out.println(email);
+        }
+            
+        return emails;
+    }
 }
