@@ -33,7 +33,7 @@ public class Ngnotify implements NgnotifyInterface {
     }
 
     @Override
-    public String newSubscription(String ip, int creator_id, int subscriber_id) {
+    public String newSubscription(String ip, int creator_id, int subscriber_id, String image_path) {
         System.out.println("newSubscription");
         try {
             // Lihat apakah subscription request sudah pernah ada
@@ -81,13 +81,14 @@ public class Ngnotify implements NgnotifyInterface {
             this.addLog("New subscription request from user " + subscriber_id + " to penyanyi " + creator_id + " using " + ip, ip,
                     "newSubscription");
 
-            this.db.prepareStatement("INSERT INTO subscriptions VALUES (?, ?, ?)");
+            this.db.prepareStatement("INSERT INTO subscriptions VALUES (?, ?, ?,?)");
             this.db.bind(1, creator_id);
             this.db.bind(2, subscriber_id);
             this.db.bind(3, "PENDING");
+            this.db.bind(4, image_path);
             this.db.executeUpdate();
             HTTP http = new HTTP();
-            if(!http.newSubscription(creator_id, subscriber_id)){
+            if(!http.newSubscription(creator_id, subscriber_id, image_path)){
                 throw new Exception("Failed to send new subscription request to creator");
             }
             this.db.commitTransaction();

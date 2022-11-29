@@ -12,17 +12,18 @@ import java.util.HashMap;
 public class HTTP {
     public static void main(String[] args) throws IOException, InterruptedException {
         HTTP http = new HTTP();
-        if(http.newSubscription(1, 1)){
+        if(http.newSubscription(1, 1, "ini image")){
             System.out.println("Success");
         } else {
             System.out.println("Failed");
         }
     }
 
-    public boolean newSubscription(Integer creator_id,Integer subscriber_id) throws IOException, InterruptedException {
+    public boolean newSubscription(Integer creator_id,Integer subscriber_id, String image_path) throws IOException, InterruptedException {
         HashMap values = new HashMap<String, String>() {{
             put("subscriber_id", String.valueOf(subscriber_id));
             put ("creator_id", String.valueOf(creator_id));
+            put("image_path", image_path);
         }};
 
         ObjectMapper objectMapper = new ObjectMapper();
