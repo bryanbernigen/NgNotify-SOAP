@@ -35,6 +35,11 @@ public class Ngnotify implements NgnotifyInterface {
     @Override
     public String newSubscription(String auth ,String ip, int creator_id, int subscriber_id) {
         if(!auth.equals("ngnotifyrest") && !auth.equals("ngnotifyvanilla")){
+            try {
+                this.addLog("Unauthorized access to NewSubscription from "+ip, ip, "newSubscription");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return "Unauthorized API access";
         }
         System.out.println("newSubscription");
@@ -101,6 +106,11 @@ public class Ngnotify implements NgnotifyInterface {
     @Override
     public String[] getSubscriptionList(String auth, String ip, String status) {
         if(!auth.equals("ngnotifyrest") && !auth.equals("ngnotifyvanilla")){
+            try {
+                this.addLog("Unauthorized access to GetSubscriptionList from "+ip, ip, "getSubscriptionList");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return new String[]{"Unauthorized API Access"};
         }
         System.out.println("getSubscriptionList");
@@ -145,6 +155,11 @@ public class Ngnotify implements NgnotifyInterface {
     @Override
     public String[] getSingleUserSubscriptionList(String auth, String ip, int subscriber_id) {
         if(!auth.equals("ngnotifyrest") && !auth.equals("ngnotifyvanilla")){
+            try {
+                this.addLog("Unauthorized access to GetSingleUserSubscriptionList from "+ip, ip, "getSingleUserSubscriptionList");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return new String[]{"Unauthorized API Access"};
         }
         System.out.println("getSingleUserSubscriptionList");
@@ -187,6 +202,14 @@ public class Ngnotify implements NgnotifyInterface {
 
     @Override
     public String acceptSubscription(String auth, String ip, int creator_id, int subscriber_id) {
+        if(!auth.equals("ngnotifyrest") && !auth.equals("ngnotifyvanilla")){
+            try {
+                this.addLog("Unauthorized access to AcceptSubscription from "+ip, ip, "acceptSubscription");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "Unauthorized API Access";
+        }
         if(!auth.equals("ngnotifyrest") && !auth.equals("ngnotifyvanilla")){
             return "Unauthorized API Access";
         }
@@ -232,6 +255,11 @@ public class Ngnotify implements NgnotifyInterface {
     @Override
     public String rejectSubscription(String auth, String ip, int creator_id, int subscriber_id) {
         if(!auth.equals("ngnotifyrest") && !auth.equals("ngnotifyvanilla")){
+            try {
+                this.addLog("Unauthorized access to RejectSubscription from "+ip, ip, "rejectSubscription");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return "Unauthorized API Access";
         }
         System.out.println("rejectSubscription");
@@ -276,6 +304,11 @@ public class Ngnotify implements NgnotifyInterface {
     @Override
     public String checkStatus(String auth, String ip, int creator_id, int subscriber_id) {
         if(!auth.equals("ngnotifyrest") && !auth.equals("ngnotifyvanilla")){
+            try {
+                this.addLog("Unauthorized access to CheckStatus from "+ip, ip, "checkStatus");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return "Unauthorized API Access";
         }
         System.out.println("checkStatus");
