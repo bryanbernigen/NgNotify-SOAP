@@ -137,6 +137,46 @@ public class Ngnotify implements NgnotifyInterface {
     }
 
     @Override
+    public String[] getSingleUserSubscriptionList(String ip, int subscriber_id) {
+        System.out.println("getSingleUserSubscriptionList");
+        try {
+            // Masukkan Log
+            this.db.startTransaction();
+            this.addLog("Get user "+subscriber_id+" subscription list  using " + ip, ip, "getSubscriptionList");
+
+            // Ambil data
+            this.db.prepareStatement("SELECT creator_id,status FROM subscriptions WHERE subscriber_id = ?");
+            this.db.bind(1, subscriber_id);
+            ResultSet result = this.db.executeQuery();
+
+            // Hitung Jumlah Data yang ada
+            int count = 0;
+            while (result.next()) {
+                count++;
+            }
+
+            // Buat array sebesar data untuk diisi hasil query
+            String[] list = new String[count];
+            count = 0;
+            result.beforeFirst();
+            while (result.next()) {
+                list[count] = result.getString("creator_id") + ";" + result.getString("status") ;
+                count++;
+            }
+            this.db.commitTransaction();
+            return list;
+        } catch (Exception e) {
+            System.out.println(e);
+            try {
+                this.db.rollbackTransaction();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    @Override
     public String acceptSubscription(String ip, int creator_id, int subscriber_id) {
         System.out.println("acceptSubscription");
         try {
