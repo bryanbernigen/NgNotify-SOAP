@@ -12,10 +12,6 @@ import java.util.Vector;
 
 import javax.swing.text.StyledEditorKit.BoldAction;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import jdk.nashorn.internal.parser.JSONParser;
-
 public class HTTP {
     public static void main(String[] args) throws IOException, InterruptedException {
         HTTP http = new HTTP();
