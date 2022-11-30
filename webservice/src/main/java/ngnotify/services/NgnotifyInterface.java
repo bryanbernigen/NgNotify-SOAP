@@ -9,7 +9,7 @@ import javax.jws.soap.SOAPBinding.Style;
 @WebService
 @SOAPBinding(style = Style.DOCUMENT)
 public interface NgnotifyInterface {
-    @WebMethod String newSubscription(@WebParam(name = "Auth",header = true) String auth,String ip, int creator_id, int subscriber_id);
+    @WebMethod String newSubscription(@WebParam(name = "Auth",header = true) String auth,String ip, int creator_id, int subscriber_id, String image_path);
     @WebMethod String[] getSubscriptionList(@WebParam(name = "Auth",header = true) String auth,String ip, String status);
     @WebMethod String[] getSingleUserSubscriptionList(@WebParam(name = "Auth",header = true) String auth,String ip, int subscriber_id);
     @WebMethod String acceptSubscription(@WebParam(name = "Auth",header = true) String auth,String ip, int creator_id, int subscriber_id);

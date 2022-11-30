@@ -1,5 +1,6 @@
 package ngnotify.services;
 
+import java.io.Console;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 
@@ -33,7 +34,7 @@ public class Ngnotify implements NgnotifyInterface {
     }
 
     @Override
-    public String newSubscription(String auth ,String ip, int creator_id, int subscriber_id) {
+    public String newSubscription(String auth ,String ip, int creator_id, int subscriber_id, String image_path) {
         if(!auth.equals("ngnotifyrest") && !auth.equals("ngnotifyvanilla")){
             try {
                 this.addLog("Unauthorized access to NewSubscription from "+ip, ip, "newSubscription");
@@ -85,10 +86,11 @@ public class Ngnotify implements NgnotifyInterface {
             this.addLog("New subscription request from " + subscriber_id + " to " + creator_id + " using " + ip, ip,
                     "newSubscription");
 
-            this.db.prepareStatement("INSERT INTO subscriptions VALUES (?, ?, ?)");
+            this.db.prepareStatement("INSERT INTO subscriptions VALUES (?, ?, ?, ?)");
             this.db.bind(1, creator_id);
             this.db.bind(2, subscriber_id);
             this.db.bind(3, "PENDING");
+            this.db.bind(4, image_path);
             this.db.executeUpdate();
             this.db.commitTransaction();
             return "Subscription request sent, waiting for approval";
