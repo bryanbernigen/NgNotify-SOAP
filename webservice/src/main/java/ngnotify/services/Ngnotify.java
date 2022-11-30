@@ -15,6 +15,8 @@ import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
+import java.util.Vector;
+
 @WebService(endpointInterface = "ngnotify.services.NgnotifyInterface")
 public class Ngnotify implements NgnotifyInterface {
     private DB db;
@@ -33,7 +35,7 @@ public class Ngnotify implements NgnotifyInterface {
     }
 
     @Override
-    public String newSubscription(String ip, int creator_id, int subscriber_id) {
+    public String newSubscription(String ip, int creator_id, int subscriber_id, String image_path) {
         System.out.println("newSubscription");
         try {
             // Lihat apakah subscription request sudah pernah ada
@@ -49,7 +51,7 @@ public class Ngnotify implements NgnotifyInterface {
                 } else { // JIKA PERNAH REJECTED
                     try {
                         this.db.startTransaction();
-                        this.addLog("Resend subscription request from " + subscriber_id + " to " + creator_id + " using " + ip,
+                        this.addLog("Resend subscription request from user " + subscriber_id + " to penyanyi " + creator_id + " using " + ip,
                                 ip,
                                 "newSubscription");
                         
@@ -58,6 +60,10 @@ public class Ngnotify implements NgnotifyInterface {
                         this.db.bind(1, creator_id);
                         this.db.bind(2, subscriber_id);
                         this.db.executeUpdate();
+                        HTTP http = new HTTP();
+                        if(!http.updateSubscription(creator_id, subscriber_id, "PENDING")){
+                            throw new Exception("Failed to send subscription request to creator");
+                        }
                         this.db.commitTransaction();
                         return "Subscription request sent";
                     } catch (Exception e) {
@@ -74,15 +80,25 @@ public class Ngnotify implements NgnotifyInterface {
 
             // Jika belum ada subcription request, maka buat Subscription request baru
             this.db.startTransaction();
-            this.addLog("New subscription request from " + subscriber_id + " to " + creator_id + " using " + ip, ip,
+            this.addLog("New subscription request from user " + subscriber_id + " to penyanyi " + creator_id + " using " + ip, ip,
                     "newSubscription");
 
-            this.db.prepareStatement("INSERT INTO subscriptions VALUES (?, ?, ?)");
+            this.db.prepareStatement("INSERT INTO subscriptions VALUES (?, ?, ?,?)");
             this.db.bind(1, creator_id);
             this.db.bind(2, subscriber_id);
             this.db.bind(3, "PENDING");
+            this.db.bind(4, image_path);
             this.db.executeUpdate();
+            HTTP http = new HTTP();
+            if(!http.newSubscription(creator_id, subscriber_id, image_path)){
+                throw new Exception("Failed to send new subscription request to creator");
+            }
             this.db.commitTransaction();
+            Vector<String> emails = http.getAdminEmails();
+            String[] emailsArray = new String[emails.size()];
+            emailsArray = emails.toArray(emailsArray);
+            SendEmail sendEmail = new SendEmail();
+            sendEmail.send(emailsArray, "User "+subscriber_id);
             return "Subscription request sent, waiting for approval";
         } catch (Exception e) {
             System.out.println(e);
@@ -203,7 +219,10 @@ public class Ngnotify implements NgnotifyInterface {
             this.db.bind(1, creator_id);
             this.db.bind(2, subscriber_id);
             this.db.executeUpdate();
-            // TODO CALLBACK REST BUAT UPDATE DATA SUBSCRIBER
+            HTTP http = new HTTP();
+            if(!http.updateSubscription(creator_id, subscriber_id, "ACCEPTED")){
+                throw new Exception("Failed to send subscription request to creator");
+            }
             this.db.commitTransaction();
             return "Subscription request accepted";
         } catch (Exception e) {
@@ -244,7 +263,10 @@ public class Ngnotify implements NgnotifyInterface {
             this.db.bind(1, creator_id);
             this.db.bind(2, subscriber_id);
             this.db.executeUpdate();
-            // TODO CALLBACK REST BUAT UPDATE DATA SUBSCRIBER
+            HTTP http = new HTTP();
+            if(!http.updateSubscription(creator_id, subscriber_id, "REJECTED")){
+                throw new Exception("Failed to send subscription request to creator");
+            }
             this.db.commitTransaction();
             return "Subscription request rejected";
         } catch (Exception e) {
