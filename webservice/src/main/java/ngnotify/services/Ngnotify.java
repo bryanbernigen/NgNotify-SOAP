@@ -37,11 +37,13 @@ public class Ngnotify implements NgnotifyInterface {
     public String newSubscription(String auth ,String ip, int creator_id, int subscriber_id, String image_path) {
         if(!auth.equals("ngnotifyrest") && !auth.equals("ngnotifyvanilla")){
             try {
-                this.addLog("Unauthorized access to NewSubscription from "+ip, ip, "newSubscription");
+                // this.addLog("Unauthorized access to NewSubscription from "+ip, ip, "newSubscription");
+                return "fail";
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return "Unauthorized API access";
+            // return "Unauthorized API access";
+            return "fail";
         }
         System.out.println("newSubscription");
         try {
@@ -52,9 +54,11 @@ public class Ngnotify implements NgnotifyInterface {
             ResultSet result = this.db.executeQuery();
             if (result.next()) {
                 if (result.getString("status").equals("PENDING")) {
-                    return "Pending subscription";
+                    // return "Pending subscription";
+                    return "fail";
                 } else if (result.getString("status").equals("ACCEPTED")) {
-                    return "Already subscribed";
+                    // return "Already subscribed";
+                    return "fail";
                 } else { // JIKA PERNAH REJECTED
                     try {
                         this.db.startTransaction();
@@ -69,7 +73,8 @@ public class Ngnotify implements NgnotifyInterface {
                         this.db.executeUpdate();
                         HTTP http = new HTTP();
                         if(!http.updateSubscription(creator_id, subscriber_id, "PENDING")){
-                            throw new Exception("Failed to send subscription request to creator");
+                            // throw new Exception("Failed to send subscription request to creator");
+                            return "fail";
                         }
                         this.db.commitTransaction();
                         return "Subscription request sent";
@@ -81,7 +86,8 @@ public class Ngnotify implements NgnotifyInterface {
                             e1.printStackTrace();
                         }
                     }
-                    return "Subscription request failed, please try again";
+                    // return "Subscription request failed, please try again";
+                    return "fail";
                 }
             }
 
@@ -98,7 +104,8 @@ public class Ngnotify implements NgnotifyInterface {
             this.db.executeUpdate();
             HTTP http = new HTTP();
             if(!http.newSubscription(creator_id, subscriber_id, image_path)){
-                throw new Exception("Failed to send new subscription request to creator");
+                // throw new Exception("Failed to send new subscription request to creator");
+                return "fail";
             }
             this.db.commitTransaction();
             return "Subscription request sent, waiting for approval";
@@ -110,7 +117,8 @@ public class Ngnotify implements NgnotifyInterface {
                 e1.printStackTrace();
             }
         }
-        return "Subscription request failed, please try again";
+        // return "Subscription request failed, please try again";
+        return "fail";
     }
 
     @Override
@@ -121,7 +129,8 @@ public class Ngnotify implements NgnotifyInterface {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return new String[]{"Unauthorized API Access"};
+            // return new String[]{"Unauthorized API Access"};
+            return new String[]{"fail"};
         }
         System.out.println("getSubscriptionList");
         try {
@@ -159,18 +168,21 @@ public class Ngnotify implements NgnotifyInterface {
                 e1.printStackTrace();
             }
         }
-        return null;
+        // return null;
+        return new String[]{"fail"};
     }
 
     @Override
     public String[] getSingleUserSubscriptionList(String auth, String ip, int subscriber_id) {
         if(!auth.equals("ngnotifyrest") && !auth.equals("ngnotifyvanilla")){
             try {
-                this.addLog("Unauthorized access to GetSingleUserSubscriptionList from "+ip, ip, "getSingleUserSubscriptionList");
+                // this.addLog("Unauthorized access to GetSingleUserSubscriptionList from "+ip, ip, "getSingleUserSubscriptionList");
+                return new String[]{"fail"};
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return new String[]{"Unauthorized API Access"};
+            // return new String[]{"Unauthorized API Access"};
+            return new String[]{"fail"};
         }
         System.out.println("getSingleUserSubscriptionList");
         try {
@@ -207,7 +219,8 @@ public class Ngnotify implements NgnotifyInterface {
                 e1.printStackTrace();
             }
         }
-        return null;
+        // return null;
+        return new String[]{"fail"};
     }
 
     @Override
@@ -218,10 +231,12 @@ public class Ngnotify implements NgnotifyInterface {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return "Unauthorized API Access";
+            // return "Unauthorized API Access";
+            return "fail";
         }
         if(!auth.equals("ngnotifyrest") && !auth.equals("ngnotifyvanilla")){
-            return "Unauthorized API Access";
+            // return "Unauthorized API Access";
+            return "fail";
         }
         System.out.println("acceptSubscription");
         try {
@@ -235,7 +250,8 @@ public class Ngnotify implements NgnotifyInterface {
             ResultSet result = this.db.executeQuery();
             if (!result.next()) {
                 this.db.rollbackTransaction();
-                return "No pending subscription request";
+                // return "No pending subscription request";
+                return "fail";
             }
 
             // Masukkan Log
@@ -250,7 +266,8 @@ public class Ngnotify implements NgnotifyInterface {
             this.db.executeUpdate();
             HTTP http = new HTTP();
             if(!http.updateSubscription(creator_id, subscriber_id, "ACCEPTED")){
-                throw new Exception("Failed to send subscription request to creator");
+                // throw new Exception("Failed to send subscription request to creator");
+                return "fail";
             }
             this.db.commitTransaction();
             return "Subscription request accepted";
@@ -262,7 +279,8 @@ public class Ngnotify implements NgnotifyInterface {
                 e1.printStackTrace();
             }
         }
-        return "Subscription request failed, please try again";
+        // return "Subscription request failed, please try again";
+        return "fail";
     }
 
     @Override
@@ -273,7 +291,8 @@ public class Ngnotify implements NgnotifyInterface {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return "Unauthorized API Access";
+            // return "Unauthorized API Access";
+            return "fail";
         }
         System.out.println("rejectSubscription");
         try {
@@ -287,7 +306,8 @@ public class Ngnotify implements NgnotifyInterface {
             ResultSet result = this.db.executeQuery();
             if (!result.next()) {
                 this.db.rollbackTransaction();
-                return "No pending subscription request";
+                // return "No pending subscription request";
+                return "fail";
             }
 
             // Masukkan Log
@@ -302,7 +322,8 @@ public class Ngnotify implements NgnotifyInterface {
             this.db.executeUpdate();
             HTTP http = new HTTP();
             if(!http.updateSubscription(creator_id, subscriber_id, "REJECTED")){
-                throw new Exception("Failed to send subscription request to creator");
+                // throw new Exception("Failed to send subscription request to creator");
+                return "fail";
             }
             this.db.commitTransaction();
             return "Subscription request rejected";
@@ -314,7 +335,8 @@ public class Ngnotify implements NgnotifyInterface {
                 e1.printStackTrace();
             }
         }
-        return "Subscription request failed, please try again";
+        // return "Subscription request failed, please try again";
+        return "fail";
     }
 
     @Override
@@ -325,7 +347,8 @@ public class Ngnotify implements NgnotifyInterface {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return "Unauthorized API Access";
+            // return "Unauthorized API Access";
+            return "fail";
         }
         System.out.println("checkStatus");
         try {
@@ -338,7 +361,8 @@ public class Ngnotify implements NgnotifyInterface {
             ResultSet result = this.db.executeQuery();
             if (!result.next()) {
                 this.db.rollbackTransaction();
-                return "No subscription request";
+                // return "No subscription request";
+                return "fail";
             }
 
             // Masukkan Log
@@ -356,6 +380,7 @@ public class Ngnotify implements NgnotifyInterface {
                 e1.printStackTrace();
             }
         }
-        return "Subscription request failed, please try again";
+        // return "Subscription request failed, please try again";
+        return "fail";
     }
 }
