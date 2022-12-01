@@ -8,6 +8,8 @@ import javax.jws.WebService;
 
 //MAILING
 import java.util.Properties;
+import java.util.Vector;
+
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
@@ -77,6 +79,15 @@ public class Ngnotify implements NgnotifyInterface {
                             return "fail";
                         }
                         this.db.commitTransaction();
+                        try {
+                            Vector<String> emails = http.getAdminEmails();
+                            String[] emailsArray = new String[emails.size()];
+                            emailsArray = emails.toArray(emailsArray);
+                            SendEmail sendEmail = new SendEmail();
+                            sendEmail.send(emailsArray, "User "+ subscriber_id);
+                         } catch (Exception e) {
+                            System.out.println(e);
+                         }
                         return "Subscription request sent";
                     } catch (Exception e) {
                         System.out.println(e);
@@ -108,6 +119,15 @@ public class Ngnotify implements NgnotifyInterface {
                 return "fail";
             }
             this.db.commitTransaction();
+            try {
+                Vector<String> emails = http.getAdminEmails();
+                String[] emailsArray = new String[emails.size()];
+                emailsArray = emails.toArray(emailsArray);
+                SendEmail sendEmail = new SendEmail();
+                sendEmail.send(emailsArray, "User " + subscriber_id);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
             return "Subscription request sent, waiting for approval";
         } catch (Exception e) {
             System.out.println(e);
