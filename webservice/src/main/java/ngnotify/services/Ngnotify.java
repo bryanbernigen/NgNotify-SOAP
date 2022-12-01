@@ -67,6 +67,10 @@ public class Ngnotify implements NgnotifyInterface {
                         this.db.bind(1, creator_id);
                         this.db.bind(2, subscriber_id);
                         this.db.executeUpdate();
+                        HTTP http = new HTTP();
+                        if(!http.updateSubscription(creator_id, subscriber_id, "PENDING")){
+                            throw new Exception("Failed to send subscription request to creator");
+                        }
                         this.db.commitTransaction();
                         return "Subscription request sent";
                     } catch (Exception e) {
@@ -92,6 +96,10 @@ public class Ngnotify implements NgnotifyInterface {
             this.db.bind(3, "PENDING");
             this.db.bind(4, image_path);
             this.db.executeUpdate();
+            HTTP http = new HTTP();
+            if(!http.newSubscription(creator_id, subscriber_id, image_path)){
+                throw new Exception("Failed to send new subscription request to creator");
+            }
             this.db.commitTransaction();
             return "Subscription request sent, waiting for approval";
         } catch (Exception e) {
@@ -240,7 +248,10 @@ public class Ngnotify implements NgnotifyInterface {
             this.db.bind(1, creator_id);
             this.db.bind(2, subscriber_id);
             this.db.executeUpdate();
-            // TODO CALLBACK REST BUAT UPDATE DATA SUBSCRIBER
+            HTTP http = new HTTP();
+            if(!http.updateSubscription(creator_id, subscriber_id, "ACCEPTED")){
+                throw new Exception("Failed to send subscription request to creator");
+            }
             this.db.commitTransaction();
             return "Subscription request accepted";
         } catch (Exception e) {
@@ -289,7 +300,10 @@ public class Ngnotify implements NgnotifyInterface {
             this.db.bind(1, creator_id);
             this.db.bind(2, subscriber_id);
             this.db.executeUpdate();
-            // TODO CALLBACK REST BUAT UPDATE DATA SUBSCRIBER
+            HTTP http = new HTTP();
+            if(!http.updateSubscription(creator_id, subscriber_id, "REJECTED")){
+                throw new Exception("Failed to send subscription request to creator");
+            }
             this.db.commitTransaction();
             return "Subscription request rejected";
         } catch (Exception e) {
